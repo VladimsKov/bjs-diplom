@@ -33,40 +33,36 @@ let timerFunc = setInterval(exchangeRates, 60000);
 const moneyManager = new MoneyManager();
 moneyManager.addMoneyCallback = (data) => {
     ApiConnector.addMoney(data, (response) => {
-        let message;
         if (response.success) {
             ProfileWidget.showProfile(response.data);
-            message = "зачисление прошло успешно";            
+            moneyManager.setMessage(response.success, "зачисление прошло успешно");  
         } else {
-            message = "Ошибка. Отмена операции";
+            moneyManager.setMessage(response.success, response.error);
         }
-        moneyManager.setMessage(response.success, message);
-    })
+        
+    });
 } 
 
 moneyManager.conversionMoneyCallback = (data) => {
     ApiConnector.convertMoney(data, (response) => {
-        let message;
         if (response.success) {
-            ProfileWidget.showProfile(response.data);
-            message = "конвертация прошла успешно";  
+            ProfileWidget.showProfile(response.data);       
+            moneyManager.setMessage(response.success, "конвертация прошла успешно");
         } else {
-            message = "Ошибка. Отмена операции";
+            moneyManager.setMessage(response.success, response.error);
         }
-        moneyManager.setMessage(response.success, message);
-    })
+        
+    });
 }
 
 moneyManager.sendMoneyCallback = (data) => {
-    ApiConnector.transferMoney(data, (response) => {
-        let message;
+    ApiConnector.transferMoney(data, (response) => {        
         if (response.success) {
             ProfileWidget.showProfile(response.data);
-            message = "перевод прошел успешно";  
+            moneyManager.setMessage(response.success, "перевод прошел успешно"); 
         } else {
-            message = "Ошибка. Отмена операции";
+            moneyManager.setMessage(response.success, response.error);
         }
-        moneyManager.setMessage(response.success, message);
     })
 }
 
@@ -78,36 +74,32 @@ ApiConnector.getFavorites((response) => {
         favoritesWidget.fillTable(response.data);
         moneyManager.updateUsersList(response.data);
     }
-})
+});
 
 favoritesWidget.addUserCallback = (data) => {
     ApiConnector.addUserToFavorites(data, (response) => {
-        let message;
         if (response.success) {
             favoritesWidget.clearTable();
             favoritesWidget.fillTable(response.data);
             moneyManager.updateUsersList(response.data);
-            message = "Пользователь успешно добавлен";
+            favoritesWidget.setMessage(response.success, "Пользователь успешно добавлен");
         } else {
-            message = "Ошибка. Отмена операции";
+            favoritesWidget.setMessage(response.success, response.error);
         }
-        moneyManager.setMessage(response.success, message);
-    })
+    });
 }
 
 favoritesWidget.removeUserCallback = (data) => {
     ApiConnector.removeUserFromFavorites(data, (response) => {
-        let message;
         if (response.success) {
             favoritesWidget.clearTable();
             favoritesWidget.fillTable(response.data);
             moneyManager.updateUsersList(response.data);
-            message = "Пользователь успешно удален";
+            favoritesWidget.setMessage(response.success, "Пользователь успешно удален");
         } else {
-            message = "Ошибка. Отмена операции";
+            favoritesWidget.setMessage(response.success, response.error);
         }
-        moneyManager.setMessage(response.success, message);
-    })
+    });
 }
 
 
